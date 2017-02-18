@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Products;
 
 /**
  * This is the model class for table "products".
@@ -55,5 +56,38 @@ class Products extends \yii\db\ActiveRecord
             'categories' => 'Categories',
             'photo_goods' => 'Photo Goods',
         ];
+    }
+
+    public function search($params) {
+        $query = Products::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        /**
+         * Настройка параметров сортировки
+         * Важно: должна быть выполнена раньше $this->load($params)
+         */
+        $dataProvider->setSort([
+            'attributes' => [
+                'id',
+            ]
+        ]);
+
+        if (!($this->load($params) && $this->validate())) {
+            return $dataProvider;
+        }
+
+
+
+        /* Настроим правила фильтрации */
+       /*
+        // фильтр по имени
+        $query->andWhere('first_name LIKE "%' . $this->fullName . '%" ' .
+            'OR last_name LIKE "%' . $this->fullName . '%"'
+        );
+*/
+        return $dataProvider;
     }
 }
